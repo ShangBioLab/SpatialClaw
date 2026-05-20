@@ -1,0 +1,184 @@
+# SPATIALCLAW — LLM-Friendly Project Summary
+
+## What is SPATIALCLAW?
+
+SPATIALCLAW is a **local-first, skill-based multi-omics analysis framework**. It provides specialized analysis skills covering spatial transcriptomics, single-cell omics, genomics, proteomics, metabolomics, and orchestration workflows.
+
+All processing happens locally. No genetic or spatial data leaves the machine.
+
+---
+
+## Key Concepts
+
+- **Skill**: A self-contained analysis module with a `SKILL.md` spec, a Python CLI script, and tests.
+- **AnnData (`.h5ad`)**: The universal file format for passing data between skills.
+- **SpatialSession**: A JSON state tracker for multi-skill workflows (stored in `profiles/`).
+- **SPATIALCLAW.py**: The central CLI runner that registers skills, filters flags, and dispatches subprocesses.
+- **Orchestrator**: `spatial-orchestrator` routes natural-language queries or file extensions to the right skill.
+
+---
+
+## All 50+ Skills (5 Omics Domains)
+
+### Spatial Transcriptomics (15 skills)
+
+| CLI Alias | Skill Directory | Purpose |
+|-----------|-----------------|---------|
+| `spatial-preprocessing` | `skills/spatial/spatial-preprocess/` | QC, normalization, HVG, PCA, UMAP, clustering |
+| `spatial-domain-identification` | `skills/spatial/spatial-domains/` | Tissue region / niche identification |
+| `spatial-cell-annotation` | `skills/spatial/spatial-annotate/` | Cell type annotation |
+| `spatial-deconvolution` | `skills/spatial/spatial-deconv/` | Cell type proportion estimation |
+| `spatial-statistics` | `skills/spatial/spatial-statistics/` | Moran's I, Geary's C, Ripley's K, etc. |
+| `spatial-svg-detection` | `skills/spatial/spatial-genes/` | Spatially variable genes |
+| `spatial-de` | `skills/spatial/spatial-de/` | Differential expression |
+| `spatial-condition-comparison` | `skills/spatial/spatial-condition/` | Pseudobulk condition comparison |
+| `spatial-cell-communication` | `skills/spatial/spatial-communication/` | Ligand-receptor interactions |
+| `spatial-velocity` | `skills/spatial/spatial-velocity/` | RNA velocity / cellular dynamics |
+| `spatial-trajectory` | `skills/spatial/spatial-trajectory/` | Trajectory inference / pseudotime |
+| `spatial-enrichment` | `skills/spatial/spatial-enrichment/` | Pathway and gene set enrichment |
+| `spatial-cnv` | `skills/spatial/spatial-cnv/` | Copy number variation inference |
+| `spatial-integration` | `skills/spatial/spatial-integrate/` | Multi-sample integration (Harmony, BBKNN, Scanorama) |
+| `spatial-registration` | `skills/spatial/spatial-register/` | Spatial registration / slice alignment |
+
+### Other Domains
+- **Single-Cell Omics**: 9 skills (sc-preprocessing, sc-doublet-detection, sc-cell-annotation, etc.)
+- **Genomics**: 10 skills (genomics-vcf-operations, genomics-variant-calling, etc.)
+- **Proteomics**: 8 skills (proteomics-ms-qc, proteomics-identification, etc.)
+- **Metabolomics**: 8 skills (metabolomics-peak-detection, metabolomics-xcms-preprocessing, etc.)
+- **Orchestrator**: 1 skill (orchestrator)
+
+---
+
+## CLI Reference
+
+```bash
+# List all skills
+python SPATIALCLAW.py list
+
+# Run a skill with data
+python SPATIALCLAW.py run <skill> --input <data.h5ad> --output <dir>
+
+# Run demo mode (no data needed)
+python SPATIALCLAW.py run <skill> --demo --output <dir>
+
+# Multi-sample integration
+python SPATIALCLAW.py run spatial-integration --input <data.h5ad> --batch-key <col> --output <dir>
+
+# Spatial registration
+python SPATIALCLAW.py run spatial-registration --input <data.h5ad> --slice-key <col> --output <dir>
+
+# Orchestrator: route a natural language query
+python SPATIALCLAW.py run orchestrator --query "show spatially variable genes" --output <dir>
+
+# Orchestrator: route by file
+python SPATIALCLAW.py run orchestrator --input <data.h5ad> --output <dir>
+
+# Orchestrator: run a named pipeline
+python SPATIALCLAW.py run orchestrator --pipeline standard --input <data.h5ad> --output <dir>
+python SPATIALCLAW.py run orchestrator --pipeline full --input <data.h5ad> --output <dir>
+
+# Orchestrator: list all skills with descriptions
+python SPATIALCLAW.py run orchestrator --list-skills --output <dir>
+```
+
+---
+
+## Named Pipelines (Orchestrator)
+
+| Pipeline | Steps |
+|----------|-------|
+| `standard` | spatial-preprocessing → spatial-domain-identification → spatial-de → spatial-svg-detection → spatial-statistics |
+| `full` | spatial-preprocessing → spatial-domain-identification → spatial-de → spatial-svg-detection → spatial-statistics → spatial-cell-communication → spatial-enrichment |
+| `multisample` | spatial-integration → spatial-preprocessing → spatial-domain-identification → spatial-de → spatial-svg-detection |
+| `velocity_trajectory` | spatial-preprocessing → spatial-velocity → spatial-trajectory |
+| `cancer` | spatial-preprocessing → spatial-domain-identification → spatial-de → spatial-cnv → spatial-enrichment |
+
+---
+
+## Keyword Routing (Orchestrator)
+
+The orchestrator maps natural-language keywords to skills. Examples:
+
+| Query Fragment | Routes To |
+|---|---|
+| "qc", "quality control", "normalize" | `spatial-preprocessing` |
+| "spatial domain", "tissue region", "niche" | `spatial-domain-identification` |
+| "cell type", "marker gene", "annotate" | `spatial-cell-annotation` |
+| "deconvolution", "cell proportion" | `spatial-deconvolution` |
+| "moran", "autocorrelation", "spatial statistics" | `spatial-statistics` |
+| "spatially variable", "SVG", "spatial pattern" | `spatial-svg-detection` |
+| "differential expression", "DE genes" | `spatial-de` |
+| "condition", "pseudobulk", "DESeq2" | `spatial-condition-comparison` |
+| "communication", "ligand receptor", "LR" | `spatial-cell-communication` |
+| "velocity", "scvelo", "RNA velocity" | `spatial-velocity` |
+| "trajectory", "pseudotime", "cellrank" | `spatial-trajectory` |
+| "enrichment", "GSEA", "pathway" | `spatial-enrichment` |
+| "CNV", "copy number" | `spatial-cnv` |
+| "integrate", "batch correction", "harmony" | `spatial-integration` |
+| "register", "alignment", "multi-slice" | `spatial-registration` |
+
+---
+
+## Output Structure
+
+Every skill writes to `--output`:
+
+```
+<output_dir>/
+├── report.md           # Human-readable Markdown report
+├── result.json         # Machine-readable findings (JSON)
+├── processed.h5ad      # Updated AnnData object
+├── figures/            # PNG/SVG plots
+├── tables/             # CSV result tables
+└── reproducibility/    # Version pins, run command
+```
+
+---
+
+## Shared Utilities
+
+Located in `SPATIALCLAW/common/`:
+
+- `report.py`: `generate_report_header()`, `generate_report_footer()`, `write_result_json()`
+- `adata_utils.py`: `ensure_pca()`, `ensure_neighbors()`, `require_spatial_coords()`, `store_analysis_metadata()`
+- `viz_utils.py`: `save_figure()`
+- `dependency_manager.py`: `require("package")`, `is_available("package")`
+
+---
+
+## Testing
+
+```bash
+python -m pytest -v                  # All 50+ skills (demo mode, no data needed)
+python -m pytest -k "preprocess" -v  # Single skill
+```
+
+All tests use `--demo` mode. Each skill has at minimum:
+- `test_demo_mode`: exits 0, output files created
+- `test_demo_report_content`: report contains expected keywords + disclaimer
+- `test_demo_result_json`: JSON parses, required keys present
+
+---
+
+## Safety
+
+1. All processing is local — data never leaves the machine
+2. Every report includes: *"SPATIALCLAW is a research and educational tool. It is not a medical device and does not provide clinical diagnoses."*
+3. Method parameters trace to published algorithms — no hallucinated thresholds
+4. `SPATIALCLAW.py` enforces per-skill `allowed_extra_flags` whitelists
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `SPATIALCLAW.py` | CLI runner, SKILLS registry, security filter |
+| `skills/catalog.json` | Machine-readable skill index (auto-generated) |
+| `CLAUDE.md` | AI agent routing instructions for Claude |
+| `AGENTS.md` | AI coding agent guide (Codex, Cursor, Devin, etc.) |
+| `docs/architecture.md` | System architecture deep-dive |
+| `llms.txt` | This file — LLM-optimised summary |
+| `requirements.txt` | Core Python dependencies |
+| `pytest.ini` | Test path registration |
+| `Makefile` | `make test`, `make demo`, `make list`, `make catalog` |

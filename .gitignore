@@ -1,0 +1,128 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+.venv-*/
+venv/
+env/
+ENV/
+
+# Environment / secrets
+.env
+.env.*
+*.env.local
+!.env.example
+
+# API keys and credentials
+*_key.txt
+*_secret.txt
+credentials.json
+token.json
+
+# SPATIALCLAW outputs (large, generated)
+output/
+sessions/
+
+# Superpowers (internal skills)
+superpowers/
+docs/superpowers/
+
+# User data (large, not committed)
+data/*
+!data/.gitkeep
+examples/*.h5ad
+examples/*.vcf.gz
+
+# Single-cell databases (large, user-downloaded)
+skills/singlecell/data/databases/*
+!skills/singlecell/data/databases/.gitkeep
+!skills/singlecell/data/databases/*/.gitkeep
+skills/singlecell/data/demo/*.h5ad
+
+# Bot logs and audit
+bot/logs/
+bot/audit/
+*.jsonl
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+/tmp/
+*.tmp
+*.log
+*.bak
+
+# Large data files
+*.h5
+*.h5ad
+*.hdf5
+*.loom
+*.zarr/
+*.gz
+*.bz2
+*.zip
+*.tar.gz
+*.vcf
+*.bam
+*.sam
+*.fastq
+*.fq
+*.mzML
+*.mzXML
+
+# R
+*.Rhistory
+*.RData
+*.Rproj.user/
+
+# Benchmarks
+.benchmarks/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+bot/data/*
+!bot/data/.gitkeep
+
+# Feishu bot manual test scripts
+tests/feishu_manual/
+
+# Large files & papers
+*.pdf
+
+# Web frontend dependencies
+node_modules/
+.next/
+
+# run folder
+.run/*
+
+
+

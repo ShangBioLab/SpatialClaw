@@ -1,0 +1,87 @@
+› /dugaoyuan/AgentAndClaw/Agents/ReMemR1-main/doc/屏幕截图 2026-04-28 015057.png，ReMemR1的checkpoint已经上传了，我该如何使用
+
+
+• 我先看你这张截图里的 checkpoint 路径和目录结构，再按这个仓库现有脚本给出最短使用路径。
+
+• Viewed Image
+  └ AgentAndClaw/Agents/ReMemR1-main/doc/屏幕截图 2026-04-28 015057.png
+
+• 从截图看，这个 checkpoint 已经是标准 HuggingFace 权重目录了，不需要再做 merge。我再读一下仓库里的 vLLM 启动脚本，给你一套能直接跑的命令。
+
+• Explored
+  └ Read 3_serve_merged_ckpt_vllm.sh, RL_CHECKPOINT_VLLM_ROUTE_20260427.md, WORKLOG_20260427.md
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• 可以直接用。按你这张截图看，这个 ReMemR1-7B 已经是标准 HuggingFace 模型目录了：
+
+  - 有 config.json
+  - 有 tokenizer.json
+  - 有 model-00001-of-00004.safetensors 这类分片权重
+
+  这意味着它已经是“可部署 checkpoint”，不需要再跑 merge_ckpt.sh。
+
+  最短使用路径就是两步。
+
+  1. 在 vllm 环境把它挂起来
+
+  如果这是 Hugging Face 仓库，比如看截图大概率是 yrshi/ReMemR1-7B，可以直接：
+
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  conda activate vllm
+
+  python -m vllm.entrypoints.openai.api_server \
+    --model yrshi/ReMemR1-7B \
+    --served-model-name ReMemR1-7B \
+    --port 8000 \
+    --api-key 123-abc
+
+  如果你已经把它下载到本地目录，就用本地路径：
+
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  conda activate vllm
+  cd /dugaoyuan/AgentAndClaw/Agents/ReMemR1-main
+
+  export CKPT_PATH=/你的本地模型目录/ReMemR1-7B
+  export API_KEY=123-abc
+  bash scripts/3_serve_merged_ckpt_vllm.sh
+  export SPATIALCLAW_REMEM_ENABLED=true
+  export SPATIALCLAW_REMEM_BASE_URL=http://127.0.0.1:8000/v1
+  export SPATIALCLAW_REMEM_MODEL=ReMemR1-7B
+  export SPATIALCLAW_REMEM_API_KEY=123-abc
+  unset SPATIALCLAW_REMEM_REASON_ENDPOINT
+
+  如果你想走仓库里更标准的链路，再多起一个 reason service：
+
+  source "$(conda info --base)/etc/profile.d/conda.sh"
+  conda activate vllm
+  cd /dugaoyuan/AgentAndClaw/Agents/ReMemR1-main
+
+  export REMEM_UPSTREAM_BASE_URL=http://127.0.0.1:8000/v1
+  export REMEM_UPSTREAM_API_KEY=123-abc
+  export REMEM_UPSTREAM_MODEL=ReMemR1-7B
+  export REMEM_REASON_PORT=8765
+  bash scripts/4_serve_remem_reason_service.sh
+
+  然后在 spatialclaw 环境里加上：
+
+  export SPATIALCLAW_REMEM_REASON_ENDPOINT=http://127.0.0.1:8765/remem_reason
+
+  补一个实际判断：
+
+  - 如果你上传的是“已经导出的 HF 权重”，现在就能用
+  - 如果只是“训练过程中的原始 actor checkpoint”，那还不能直接用，必须先 merge 成 hf_ckpt
+
+  按你这张截图，属于前者。
+
+  另外提醒一句：你前面让我查过，vllm 这个环境里目前没有 flash_attn。如果 vllm serve 启动时报 attention/kernel 相关错误，需要先补这个依赖；但从“checkpoint 形态”上看，它本身已经能接进来了。
+
+  如果你要，我下一步可以直接给你一份“从 Hugging Face 下载到本地并启动”的完整命令清单。
+
+
+› 补装一下
+
+
+• 我先检查 vllm 环境里的 Python、Torch、CUDA 版本，再按兼容版本补装 flash_attn，避免直接装错 wheel。
+
+• Running nvidia-smi --query-gpu=name,driver_version --format=csv,noheader

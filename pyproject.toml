@@ -1,0 +1,229 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spatialclaw"
+version = "0.1.0"
+description = "SpatialClaw: spatial transcriptomics analysis platform with canonical spatial skills, graph memory, and spatial modality integration"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "SpatialClaw Team"}
+]
+keywords = [
+    "spatial-omics",
+    "spatial-analysis",
+    "spatial-atac",
+    "spatial-domain-identification",
+    "spatial-modality-integration",
+    "bioinformatics",
+    "scanpy",
+    "squidpy",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+requires-python = ">=3.10,<3.14"
+
+dependencies = [
+    "scanpy>=1.9.0,<2.0",
+    "anndata>=0.11.0",
+    "squidpy>=1.2.0",
+    "mudata>=0.2.0",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.7.0",
+    "scikit-learn>=1.3",
+    "igraph>=0.9.0",
+    "leidenalg>=0.8.0",
+    "umap-learn>=0.5.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.11.0",
+    "Pillow>=8.0.0",
+    "pydantic>=2.0.0,<3.0",
+    "scikit-misc>=0.5.0",
+    "setuptools>=64",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+spatial-domain-identification = [
+    "SpaGCN>=1.2.5,<2.0",
+    "torch>=2.0.0,<3.0",
+    "torch_geometric",
+    "GraphST>=1.1.0",
+    "POT>=0.9.0",
+]
+
+spatial = [
+    "torch>=2.0.0,<3.0",
+    "scvi-tools>=1.0.0,<2.0",
+    "GraphST>=1.1.0",
+    "SpatialGlue",
+    "torch_geometric",
+    "tangram-sc>=1.0.0",
+    "scvelo>=0.2.5",
+    "liana",
+    "cellphonedb>=5.0.0,<6.0",
+    "fastccc>=0.1.0",
+    "cellrank>=2.0.0,<3.0",
+    "palantir>=1.0.0",
+    "gseapy>=1.0.0",
+    "SpatialDE>=1.1.3",
+    "esda>=2.4.0",
+    "libpysal>=4.6.0",
+    "pysal>=2.6.0",
+    "infercnvpy>=0.4.0",
+    "harmonypy>=0.0.9",
+    "bbknn>=1.5.0",
+    "scanorama>=1.7.0",
+    "POT>=0.9.0",
+    "paste-bio>=1.0.0",
+    "pydeseq2>=0.4.0",
+    "torchvision>=0.15.0",
+]
+
+full = [
+    "spatialclaw[spatial,spatial-domain-identification]",
+]
+
+memory = [
+    "aiosqlite>=0.19.0",
+    "sqlalchemy>=1.4.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "cryptography>=41.0.0",
+    "requests>=2.31.0",
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+interactive = [
+    "prompt-toolkit>=3.0",
+    "rich>=13.0",
+    "questionary>=2.0",
+]
+
+tui = [
+    "spatialclaw[interactive]",
+    "textual>=0.80",
+]
+
+research = [
+    "langchain>=0.1.0",
+    "langchain-openai>=0.1.0",
+    "langchain-anthropic>=0.1.0",
+    "langgraph>=0.0.40",
+    "nbformat>=5.9",
+    "jupyter_client>=8.0",
+    "ipykernel>=6.0",
+]
+
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=22.0.0,<26.0",
+    "mypy>=1.0.0,<2.0",
+    "ruff>=0.1.0",
+    "isort>=5.0.0",
+    "pre-commit>=3.0.0,<5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/SpatialClaw/SpatialClaw"
+Repository = "https://github.com/SpatialClaw/SpatialClaw"
+
+[project.scripts]
+spatialclaw = "spatialclaw.cli:main"
+sc = "spatialclaw.cli:main"
+spatialclaw-chat = "spatialclaw.cli:chat_main"
+sc-chat = "spatialclaw.cli:chat_main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+pythonpath = ["."]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --import-mode=importlib -m 'not slow'"
+testpaths = [
+    "tests",
+    "skills/spatial/_lib/tests",
+    "skills/spatial/spatial-preprocessing/tests",
+    "skills/spatial/spatial-domain-identification/tests",
+    "skills/spatial/spatial-cell-annotation/tests",
+    "skills/spatial/spatial-deconvolution/tests",
+    "skills/spatial/spatial-statistics/tests",
+    "skills/spatial/spatial-svg-detection/tests",
+    "skills/spatial/spatial-de/tests",
+    "skills/spatial/spatial-enrichment/tests",
+    "skills/spatial/spatial-cell-communication/tests",
+    "skills/spatial/spatial-velocity/tests",
+    "skills/spatial/spatial-trajectory/tests",
+    "skills/spatial/spatial-cnv/tests",
+    "skills/spatial/spatial-condition-comparison/tests",
+    "skills/spatial/spatial-integration/tests",
+    "skills/spatial/spatial-modality-integrate",
+    "skills/spatial/spatial-registration/tests",
+    "skills/spatial/spatial-multi-sample-integration/tests",
+    "skills/spatial/spatial-visualization/tests",
+    "skills/spatial/spatial-orchestrator/tests",
+]
+markers = [
+    "slow: tests requiring full optional deps or significant runtime",
+    "requires_torch: tests requiring PyTorch",
+    "requires_r: tests requiring R",
+    "demo: demo-mode integration tests",
+    "requires_gpu: tests requiring GPU",
+]
+filterwarnings = [
+    "ignore::FutureWarning",
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore::UserWarning:anndata",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py311", "py312"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+  | output
+  | sessions
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false
+warn_unused_ignores = true
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["spatialclaw", "spatialclaw.*", "skills", "skills.*"]
+exclude = ["tests", "tests.*", "output", "sessions"]
+
+[tool.setuptools.package-data]
+spatialclaw = ["py.typed"]
+skills = ["**/*.py", "**/SKILL.md", "**/*.md", "**/*.json", "**/*.yaml", "**/*.yml", "**/*.txt"]

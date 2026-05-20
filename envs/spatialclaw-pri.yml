@@ -1,0 +1,15 @@
+name: spatialclaw-pri
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - nodejs
+  - pip
+  - pip:
+      # Usage:
+      #   cd /dugaoyuan/AgentAndClaw/Claws/SpatialClaw-pri
+      #   conda env create -f envs/spatialclaw-pri.yml
+      - -r requirements.txt
+      - -r bot/requirements.txt
+      - -e .
