@@ -10,6 +10,7 @@ messaging/terminal interfaces. The current release is centered on spatial
 transcriptomics workflows, with support for selected paired spatial modality
 and image-omics tasks.
 
+[![Demo](docs/demo_cover.png)](docs/SKILL_Demo.mp4)
 Demo
 https://github.com/user-attachments/assets/edd456cf-e0ff-402e-9701-a0564e2e56bc
 
