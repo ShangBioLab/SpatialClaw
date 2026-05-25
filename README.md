@@ -31,6 +31,7 @@ python spatialclaw.py list
 python spatialclaw.py run spatial-preprocessing --demo --output /tmp/spatialclaw_demo
 ```
 
+[Demo](docs/SKILL_Demo.mp4)
 Demo: <video src="docs/SKILL_Demo.mp4" controls width="800"></video>
 
 After installation, the console command is also available:
