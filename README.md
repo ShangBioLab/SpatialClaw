@@ -10,6 +10,9 @@ messaging/terminal interfaces. The current release is centered on spatial
 transcriptomics workflows, with support for selected paired spatial modality
 and image-omics tasks.
 
+Demo
+https://github.com/user-attachments/assets/edd456cf-e0ff-402e-9701-a0564e2e56bc
+
 ## Features
 
 - Persistent graph memory for datasets, preferences, analyses, and sessions.
@@ -32,8 +35,7 @@ python spatialclaw.py run spatial-preprocessing --demo --output /tmp/spatialclaw
 ```
 
 
-Demo
-https://github.com/user-attachments/assets/edd456cf-e0ff-402e-9701-a0564e2e56bc
+
 
 
 
